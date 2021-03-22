@@ -125,6 +125,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Administrator E-Mail
+    |--------------------------------------------------------------------------
+    |
+    | This value is the e-mail of application's administrator. This value is used when the
+    | framework needs to grab the application's email for sending orders notification.
+    |
+    */
+
+    'admin_email' => 'n.sherbina1999@gmail.com',
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |

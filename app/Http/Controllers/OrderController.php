@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateOrderRequest;
 use App\Mail\OrderCreated;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Shipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -18,7 +20,7 @@ class OrderController extends Controller
      */
     public function checkout(Request $request)
     {
-        return view('order.checkout', ['item' => Product::findOrFail($request->id)]);
+        return view('order.checkout', ['item' => Product::findOrFail($request->id), 'shipments' => Shipment::all()]);
     }
 
     /**
@@ -26,35 +28,17 @@ class OrderController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(CreateOrderRequest $request)
     {
-        $request->validate([
-            'item_id' => 'required|integer',
-            'client_name' => 'required|string|max:255',
-            'client_address' => 'required|string|max:255',
-            'shipment' => 'required|boolean',
-            'credit_card_number' => 'required|integer|digits:16',
-            'credit_card_cvv' => 'required|integer|digits:3',
-            'credit_card_expire' => 'required|integer|digits:4',
-        ]);
-
         try {
-            $order = new Order;
-            $order->total_product_value = Product::findOrFail($request->item_id)->price;
-            $order->total_shipping_value = $order->getShipmentAttribute($request);
-            $order->client_name = $request->client_name;
-            $order->client_address = $request->client_address;
-            $order->save();
-
-            $data = [
-                'id' => $order->id,
-                'item_name' => Product::findOrFail($request->item_id)->name,
-                'total_product_value' => $order->total_product_value,
-                'total_shipping_value' => $order->total_shipping_value,
-                'client_name' => $order->client_name,
-                'client_address' => $order->client_address
-            ];
-            Mail::to('n.sherbina1999@gmail.com')->send(new OrderCreated($data));
+            $order = Order::create([
+                'product_id' => $request->item_id,
+                'total_product_value' => Product::findOrFail($request->item_id)->price,
+                'total_shipping_value' => Shipment::findOrFail($request->shipment_id)->price,
+                'client_name' => $request->client_name,
+                'client_address' => $request->client_address,
+            ]);
+            Mail::to(config('app.admin_email'))->send(new OrderCreated($order));
 
             return redirect()->route('product.show')
                 ->with(['message' => 'Your order is done. Order ID is ' . $order->id . '.']);

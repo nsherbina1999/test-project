@@ -7,34 +7,30 @@
         <div class="mb-3">
             <label for="client-name" class="form-label">Your name</label>
             <input class="form-control" name="client_name" id="client-name">
-            @if ($errors->has('client_name'))
+            @if($errors->has('client_name'))
                 <span class="text-danger">{{ $errors->first('client_name') }}</span>
             @endif
         </div>
         <div class="mb-3">
             <label for="client-address" class="form-label">Your address</label>
             <input class="form-control" name="client_address" id="client-address">
-            @if ($errors->has('client_address'))
+            @if($errors->has('client_address'))
                 <span class="text-danger">{{ $errors->first('client_address') }}</span>
             @endif
         </div>
         <div class="mb-3">
             <label class="form-label">Choose shipping option</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="shipment" id="shipment-free" value="0" checked>
-                <label class="form-check-label" for="shipment-free">
-                    Free Shipment (0 EUR)
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="shipment" id="shipment-express"
-                       value="1">
-                <label class="form-check-label" for="shipment-express">
-                    Express Shipment (10 EUR)
-                </label>
-            </div>
-            @if ($errors->has('shipment'))
-                <span class="text-danger">{{ $errors->first('shipment') }}</span>
+            @foreach($shipments as $shipment)
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="shipment_id" id="shipment-{{$shipment->id}}"
+                           value="{{$shipment->id}}" @if($loop->first) checked @endif>
+                    <label class="form-check-label" for="shipment-{{$shipment->id}}">
+                        {{$shipment->name}} ({{$shipment->price / 100}} EUR)
+                    </label>
+                </div>
+            @endforeach
+            @if($errors->has('shipment'))
+                <br><span class="text-danger">{{ $errors->first('shipment') }}</span>
             @endif
         </div>
         <div class="row g-3">

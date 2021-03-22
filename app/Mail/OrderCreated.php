@@ -2,8 +2,8 @@
 
 namespace App\Mail;
 
+use App\Models\Product;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -20,6 +20,7 @@ class OrderCreated extends Mailable
      */
     public function __construct($data)
     {
+        $data['product_name'] = Product::findOrFail($data['product_id'])->name;
         $this->data = $data;
     }
 

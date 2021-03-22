@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Brand;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class BrandSeeder extends Seeder
 {
@@ -16,16 +14,6 @@ class BrandSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('brands')->insert([
-            [
-                'name' => 'Brand 1',
-            ],
-            [
-                'name' => 'Brand 2',
-            ],
-            [
-                'name' => 'Brand 3',
-            ]
-        ]);
+        Brand::factory()->count(3)->create();
     }
 }
